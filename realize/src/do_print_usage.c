@@ -1,7 +1,7 @@
 #include "realize_defs.h"
 #include "realize_io.h"
 
-void do_print_usage(realize_options_t *opts, int arc, char **argv) {
+void do_print_usage(realize_options_t *opts, int unused_arc, char **argv) {
   // clang-format off
   rprintf(opts, LOG_LEVEL_USAGE, "Usage:\n");
   rprintf(opts, LOG_LEVEL_USAGE, "  %s (--list | -l)       List available templates.\n", argv[0]);

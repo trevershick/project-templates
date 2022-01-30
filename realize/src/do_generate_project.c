@@ -82,7 +82,7 @@ static int visit_path(const char *path, const struct stat *s, int typeflag) {
           sz, sz, destination_path, action);
   rprintf(g_opts, LOG_LEVEL_DEBUG, "make_file returning %d\n", ret);
   return ret;
-};
+}
 
 static int make_dir(realize_options_t *opts, const char *src, const char *dst,
                     bool exists) {

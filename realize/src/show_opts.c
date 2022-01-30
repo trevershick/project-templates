@@ -1,13 +1,15 @@
 #include "realize_defs.h"
 #include "realize_io.h"
 
+#include <stdio.h>
+
 const char *const kLogLevels[] = {
     "Error", "Quiet", "Info", "Debug", "Trace",
 };
 
 static const char *ll_str(realize_options_t *o) {
   int i = o->log_level + LOG_LEVEL_ERROR;
-  if (i < 0 || i > sizeof(kLogLevels) - 1) {
+  if (i < 0 || i > (int) sizeof(kLogLevels) - 1) {
     return "???";
   }
   return kLogLevels[i];

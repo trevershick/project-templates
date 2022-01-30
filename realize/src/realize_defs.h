@@ -42,7 +42,7 @@ typedef struct realize_stats_s {
 typedef struct realize_options_s {
   enum realize_command command;
   // ~/project-templates by default
-  char proj_tmpls_root_path[PATH_MAX];
+  char proj_tmpls_root_path[PATH_MAX - 10 - TEMPLATE_NAME_MAX];
 
   // ~/project-templates/template-c
   char proj_tmpl_path[PATH_MAX];

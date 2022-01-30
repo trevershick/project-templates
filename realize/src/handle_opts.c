@@ -1,5 +1,7 @@
 #include <getopt.h>
 #include <wordexp.h>
+#include <stdio.h>
+#include <string.h>
 
 #include "realize_defs.h"
 #include "realize_io.h"
@@ -74,7 +76,7 @@ int handle_opts(realize_options_t *opts, int argc, char **argv) {
     return -1;
   }
   strncpy(opts->proj_tmpls_root_path, expansion.we_wordv[0],
-          sizeof(opts->proj_tmpls_root_path));
+          sizeof(opts->proj_tmpls_root_path)-1);
 
   if (opts->command == cmd_generate_project) {
     // we need two arguments here
@@ -86,7 +88,7 @@ int handle_opts(realize_options_t *opts, int argc, char **argv) {
       return -1;
     }
 
-    strncpy(opts->template_name, argv[optind], sizeof(opts->template_name));
+    strncpy(opts->template_name, argv[optind], sizeof(opts->template_name)-1);
     if (strlen(argv[optind]) > TEMPLATE_NAME_MAX) {
       rprintf(opts, LOG_LEVEL_ERROR,
               "Template name cannot be > %d characters in length.\n",
@@ -94,7 +96,7 @@ int handle_opts(realize_options_t *opts, int argc, char **argv) {
       return -1;
     }
 
-    strncpy(opts->project_name, argv[optind + 1], sizeof(opts->project_name));
+    strncpy(opts->project_name, argv[optind + 1], sizeof(opts->project_name)-1);
     if (strlen(argv[optind + 1]) > PROJECT_NAME_MAX) {
       rprintf(opts, LOG_LEVEL_ERROR,
               "Template name cannot be > %d characters in length.\n",

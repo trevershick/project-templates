@@ -5,7 +5,7 @@
 #include <string.h>
 
 void ensmallen(char *buffer, size_t sz, const char *str) {
-  int l = strlen(str);
+  size_t l = strlen(str);
   if (l > sz) {
     memcpy(buffer, str, l / 2 - 2);
     memset(buffer + (l / 2 - 2), '.', 4);

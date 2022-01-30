@@ -25,6 +25,12 @@ add_executable(
   ${realize_sources}
 )
 
+if(MSVC)
+  target_compile_options(realize PRIVATE /W4 /WX)
+else()
+  target_compile_options(realize PRIVATE -Wall -Wextra -Wpedantic -Werror -Wno-unused-parameter)
+endif()
+
 target_sources(
   realize
   PRIVATE
