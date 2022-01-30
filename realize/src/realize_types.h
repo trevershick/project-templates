@@ -1,6 +1,7 @@
 #ifndef __REALIZE_TYPES_H__
 #define __REALIZE_TYPES_H__
 
+#define _GNU_SOURCE
 #define _XOPEN_SOURCE 500
 #include <linux/limits.h>
 #include <stdbool.h>

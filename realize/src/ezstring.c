@@ -2,6 +2,7 @@
 
 #include <stdlib.h>
 #include <string.h>
+#include <assert.h>
 
 void ensmallen(char *buffer, size_t sz, const char *str) {
   int l = strlen(str);
@@ -19,7 +20,9 @@ void str_replace(char *target, size_t target_sz, const char *needle,
   size_t needle_len = strlen(needle);
   size_t repl_len = strlen(replacement);
 
-  char *buffer = calloc(target_sz, sizeof(char));
+  char *buffer = (char*) malloc(target_sz);
+  memset(buffer, 0, target_sz);
+
   char *insert_point = &buffer[0];
   const char *tmp = target;
 
@@ -45,6 +48,6 @@ void str_replace(char *target, size_t target_sz, const char *needle,
   }
 
   // write altered string back to target
-  strncpy(target, buffer, target_sz);
+  strcpy(target, buffer);
   free(buffer);
 }
