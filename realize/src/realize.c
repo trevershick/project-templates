@@ -19,7 +19,7 @@ int load_opts_defaults(realize_options_t *);
 int do_list_templates(realize_options_t *);
 int do_generate_project(realize_options_t *);
 int do_print_version(realize_options_t *);
-int do_print_usage(realize_options_t*, int, char **);
+int do_print_usage(realize_options_t *, int, char **);
 
 int main(int argc, char **argv) {
   int ret = 0;
@@ -59,9 +59,9 @@ int main(int argc, char **argv) {
 }
 
 void show_stats(realize_options_t *opts) {
-  const char* fmt = "%-20.20s : %zu %s\n";
+  const char *fmt = "%-20.20s : %zu %s\n";
   const int ll = LOG_LEVEL_INFO;
-  const char* d = opts->dryrun ? "(not really - dryrun)" : "";
+  const char *d = opts->dryrun ? "(not really - dryrun)" : "";
   // clang-format off
   rprintf(opts, ll, fmt, "Template Files", opts->stats.template_files, d);
   rprintf(opts, ll, fmt, "Template Directories", opts->stats.template_dirs, d);

@@ -1,8 +1,8 @@
 #include "realize_io.h"
 
+#include <assert.h>
 #include <stdarg.h>
 #include <stdio.h>
-#include <assert.h>
 
 void rprintf(realize_options_t *opts, int level, const char *fmt, ...) {
   assert(opts);

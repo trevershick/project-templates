@@ -3,7 +3,7 @@ default: build/realize compile_commands.json
 .PHONY: clean
 
 clean:
-	rm -rf build compile_commands.json
+	rm -rf build compile_commands.json .cache
 
 build/realize: build
 	cmake --build $<

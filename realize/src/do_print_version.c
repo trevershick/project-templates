@@ -1,5 +1,3 @@
-#include <stdio.h>
-
 #include "realize_config.h"
 #include "realize_io.h"
 
