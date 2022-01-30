@@ -3,7 +3,7 @@ default: build/PRJNAME compile_commands.json
 .PHONY: clean
 
 clean:
-	rm -rf build compile_commands.json
+	rm -rf build compile_commands.json .cache
 
 build/PRJNAME: build
 	cmake --build $<
@@ -18,3 +18,6 @@ build: src/*.* Makefile CMakeLists.txt
 
 install:
 	sudo cmake --build build -t install
+
+format:
+	clang-format -i src/*.c src/*.h
