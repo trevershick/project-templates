@@ -3,16 +3,21 @@
 
 #include <stdio.h>
 
-const char *const kLogLevels[] = {
-    "Error", "Quiet", "Info", "Debug", "Trace",
-};
-
 static const char *ll_str(realize_options_t *o) {
-  int i = o->log_level + LOG_LEVEL_ERROR;
-  if (i < 0 || i > (int) sizeof(kLogLevels) - 1) {
+  switch (o->log_level) {
+  case LOG_LEVEL_TRACE:
+    return "trace";
+  case LOG_LEVEL_DEBUG:
+    return "debug";
+  case LOG_LEVEL_INFO:
+    return "info";
+  case LOG_LEVEL_QUIET:
+    return "quiet";
+  case LOG_LEVEL_ERROR:
+    return "error";
+  default:
     return "???";
   }
-  return kLogLevels[i];
 }
 
 #define OPTS_LINE_FMT "  %-25s: %s\n"
