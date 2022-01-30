@@ -7,6 +7,7 @@
 
 #include "realize_cli_opts.h"
 #include "realize_config.h"
+#include "realize_generate.h"
 #include "realize_types.h"
 
 void list_templates();
@@ -17,19 +18,23 @@ int main(int argc, char **argv) {
   int ret = 0;
   realize_options_t options;
   memset(&options, 0, sizeof(options));
+
   ret = load_opts_defaults(&options);
+  if (ret) exit(ret);
+
   ret = handle_opts(argc, argv, &options);
   if (ret) exit(ret);
 
   ret = validate_opts(&options);
   if (ret) exit(ret);
+
   if (options.debug) {
     show_opts(&options);
   }
 
   switch (options.command) {
   case cmd_generate_project:
-    // generate_project(&options);
+    ret = generate_project(&options);
     break;
   case cmd_list_templates:
     list_templates(&options);

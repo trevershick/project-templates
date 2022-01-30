@@ -19,6 +19,7 @@
 int load_opts_defaults(realize_options_t *opts) {
   strncpy(opts->proj_tmpls_root_path, DEFAULT_PROJ_TMPLS_ROOT_PATH,
           sizeof(opts->proj_tmpls_root_path));
+  ioctl(1, TIOCGWINSZ, &opts->window_size);
   return 0;
 }
 
@@ -33,7 +34,7 @@ void show_opts(const realize_options_t *opts) {
 
 int validate_opts(const realize_options_t *opts) {
 
-  if (!ez_directory_exists(opts->proj_tmpls_root_path)) {
+  if (!ez_is_dir(opts->proj_tmpls_root_path)) {
     fprintf(stderr, "Template Root Path (%s) does not exist\n", opts->proj_tmpls_root_path);
     return -1;
   }
@@ -45,12 +46,8 @@ int validate_opts(const realize_options_t *opts) {
   }
 
   // validate the specified template exists in the root
-  char pbuf[PATH_MAX];
-  memset(pbuf, 0, sizeof(pbuf));
-  snprintf(pbuf, sizeof(pbuf), TEMPLATE_FOLDER_FMT, opts->proj_tmpls_root_path, opts->template_name);
-
-  if (!ez_directory_exists(pbuf)) {
-    fprintf(stderr, "Project Template Directory (%s) does not exist\n", pbuf);
+  if (!ez_is_dir(opts->proj_tmpl_path)) {
+    fprintf(stderr, "Project Template Directory (%s) does not exist\n", opts->proj_tmpl_path);
     return -1;
   }
 
@@ -134,8 +131,10 @@ int handle_opts(int argc, char **argv, realize_options_t *opts) {
               TEMPLATE_NAME_MAX);
       return -1;
     }
-
-    return 0;
+  snprintf(
+    opts->proj_tmpl_path,
+    sizeof(opts->proj_tmpl_path),
+     TEMPLATE_FOLDER_FMT, opts->proj_tmpls_root_path, opts->template_name);
   }
   // we only list projects once we have our options filledin
   // since we need to
