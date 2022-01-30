@@ -16,3 +16,5 @@ build/compile_commands.json: build
 build: src/*.* Makefile CMakeLists.txt
 	cmake -B build .
 
+install:
+	sudo cmake --build build -t install
