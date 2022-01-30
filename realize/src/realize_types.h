@@ -33,6 +33,7 @@ typedef struct realize_options_s {
   // test1 for example
   char project_name[PROJECT_NAME_MAX];
   bool debug;
+  bool force;
   struct winsize window_size;
 } realize_options_t;
 

@@ -14,6 +14,7 @@
 
 #define TOKEN "PRJNAME"
 
+char line_buffer[4096];
 // add debug(bool, const char*, ... ) options
 
 // this is disappointing
@@ -52,6 +53,9 @@ static int visit_path(const char *path, const struct stat *s, int typeflag) {
     }
   } else if (typeflag == FTW_F) {
     type = 'F';
+    if (g_opts->force) {
+      action = '+';
+    }
     if (action == '+') {
       // create the file and filter its contents
       FILE *fw = fopen(destination_path, "w");
@@ -69,11 +73,11 @@ static int visit_path(const char *path, const struct stat *s, int typeflag) {
       size_t len = 0;
       ssize_t read;
       while ((read = getline(&line, &len, fr)) != -1) {
-        char *tmp = calloc(read, 1);
-        memcpy(tmp, line, read);
-        str_replace(tmp, read * 2, TOKEN, g_opts->project_name);
-        fwrite(tmp, strlen(tmp), 1, fw);
-        free(line);
+        memset(line_buffer, 0, sizeof(line_buffer));
+        memcpy(line_buffer, line, read);
+        str_replace(line_buffer, sizeof(line_buffer), TOKEN,
+                    g_opts->project_name);
+        fwrite(line_buffer, strlen(line_buffer), 1, fw);
         line= NULL;
       }
       fclose(fw);

@@ -29,6 +29,8 @@ void show_opts(const realize_options_t *opts) {
           opts->proj_tmpls_root_path);
   fprintf(stderr, "  %-25s: %s\n", "Template Name", opts->template_name);
   fprintf(stderr, "  %-25s: %s\n", "Project Name", opts->project_name);
+  fprintf(stderr, "  %-25s: %s\n", "Force", opts->force ? "Y" : "N");
+  fprintf(stderr, "  %-25s: %s\n", "Debug", opts->debug ? "Y" : "N");
   fprintf(stderr, "\n");
 }
 
@@ -62,16 +64,20 @@ int handle_opts(int argc, char **argv, realize_options_t *opts) {
     int option_index = 0;
     static struct option long_options[] = {
         {"help", no_argument, 0, 'h'},
+        {"force", no_argument, 0, 'f'},
         {"debug", no_argument, 0, 'd'},
         //{"delete",  required_argument, 0,  0 },
         {"version", no_argument, 0, 'v'},
         {"list", no_argument, 0, 'l'},
         {0, 0, 0, 0}};
-    c = getopt_long(argc, argv, "hdvl?", long_options, &option_index);
+    c = getopt_long(argc, argv, "hfdvl?", long_options, &option_index);
     if (c == -1)
       break;
 
     switch (c) {
+    case 'f':
+      opts->force = true;
+      break;
     case 'd':
       opts->debug = true;
       break;
