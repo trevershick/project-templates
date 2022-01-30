@@ -1,14 +1,12 @@
 cmake_minimum_required(VERSION 3.10)
 
-# specify the C++ standard
-set(CMAKE_CXX_STANDARD 14)
-set(CMAKE_CXX_STANDARD_REQUIRED True)
 set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
 set(CMAKE_BUILD_TYPE RelWithDebInfo)
 
 project(
   PRJNAME
   VERSION 1.0
+  LANGUAGES C
 )
 
 configure_file(src/PRJNAME_config.h.in PRJNAME_config.h)
@@ -40,3 +38,9 @@ target_include_directories(
 install(
   TARGETS PRJNAME
 )
+
+if(MSVC)
+  target_compile_options(PRJNAME PRIVATE /W4 /WX)
+else()
+  target_compile_options(PRJNAME PRIVATE -Wall -Wextra -Wpedantic -Werror -Wno-unused-parameter)
+endif()

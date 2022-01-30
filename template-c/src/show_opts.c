@@ -9,7 +9,7 @@ const char *const kLogLevels[] = {
 
 static const char *ll_str(PRJNAME_options_t *o) {
   int i = o->log_level + LOG_LEVEL_ERROR;
-  if (i < 0 || i > sizeof(kLogLevels) - 1) {
+  if (i < 0 || i > (int) sizeof(kLogLevels) - 1) {
     return "???";
   }
   return kLogLevels[i];
