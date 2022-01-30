@@ -14,10 +14,15 @@ void print_version();
 
 int main(int argc, char **argv) {
 
+  int ret = 0;
   realize_options_t options;
   memset(&options, 0, sizeof(options));
-  load_opts_defaults(&options);
-  handle_opts(argc, argv, &options);
+  ret = load_opts_defaults(&options);
+  ret = handle_opts(argc, argv, &options);
+  if (ret) exit(ret);
+
+  ret = validate_opts(&options);
+  if (ret) exit(ret);
   if (options.debug) {
     show_opts(&options);
   }
@@ -36,7 +41,7 @@ int main(int argc, char **argv) {
     print_version();
     break;
   }
-  exit(0);
+  exit(ret);
 }
 
 void list_templates(realize_options_t *opts) {}

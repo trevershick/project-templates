@@ -1,12 +1,19 @@
 #include "realize_cli_opts.h"
 
+#include "realize_types.h"
+
+#include <limits.h>
 #include <errno.h>
 #include <fcntl.h>
 #include <getopt.h>
+#include <regex.h>
 #include <stdio.h>
+#include <stdlib.h>
 #include <string.h>
 #include <sys/stat.h>
 #include <wordexp.h>
+
+#define ARRAY_SIZE(arr) (sizeof((arr)) / sizeof((arr)[0]))
 
 int load_opts_defaults(realize_options_t *opts) {
   strncpy(opts->proj_tmpls_root_path, DEFAULT_PROJ_TMPLS_ROOT_PATH,
@@ -16,19 +23,37 @@ int load_opts_defaults(realize_options_t *opts) {
 
 void show_opts(const realize_options_t *opts) {
   fprintf(stderr, "Selected Options:\n");
-  fprintf(stderr, "  Templates Root Path: %s\n", opts->proj_tmpls_root_path);
+  fprintf(stderr, "  %-25s: %s\n", "Templates Root Path",
+          opts->proj_tmpls_root_path);
+  fprintf(stderr, "  %-25s: %s\n", "Template Name", opts->template_name);
+  fprintf(stderr, "  %-25s: %s\n", "Project Name", opts->project_name);
   fprintf(stderr, "\n");
 }
 
 int validate_opts(const realize_options_t *opts) {
   struct stat s;
-  memset(&s, 0, sizeof(struct stat));
-  if (stat(opts->proj_tmpls_root_path, &s)) {
-    perror("stat template root path");
+  if (stat(opts->proj_tmpls_root_path, &s) || !S_ISDIR(s.st_mode)) {
+    fprintf(stderr, "Template Root Path (%s) does not exist\n", opts->proj_tmpls_root_path);
     return -1;
   }
-  if (!S_ISDIR(s.st_mode)) {
-    perror("template root path is not a directory");
+
+  // validate the specified project name is ok
+  regex_t regex;
+  regmatch_t pmatch[1];
+  #define PNAME_PATTERN "^[a-zA-Z0-9]+$"
+  if (regcomp(&regex, PNAME_PATTERN, REG_EXTENDED | REG_NEWLINE))
+    return -1;
+  if (regexec(&regex, opts->project_name, ARRAY_SIZE(pmatch), pmatch, 0) == REG_NOMATCH) {
+      fprintf(stderr, "Project name must match " PNAME_PATTERN "\n");
+      return -1;
+  }
+
+  // validate the specified template exists in the root
+  char pbuf[PATH_MAX];
+  memset(pbuf, 0, sizeof(pbuf));
+  snprintf(pbuf, sizeof(pbuf), "%s/template-%s", opts->proj_tmpls_root_path, opts->template_name);
+  if (stat(pbuf, &s) != 0 || !S_ISDIR(s.st_mode)) {
+    fprintf(stderr, "Project Template Directory (%s) does not exist", pbuf);
     return -1;
   }
 
@@ -36,7 +61,7 @@ int validate_opts(const realize_options_t *opts) {
 }
 
 int handle_opts(int argc, char **argv, realize_options_t *opts) {
-  opts->command = cmd_print_usage;
+  opts->command = cmd_generate_project;
 
   int c;
   while (1) {
@@ -72,15 +97,6 @@ int handle_opts(int argc, char **argv, realize_options_t *opts) {
     }
   }
 
-  if (optind < argc) {
-    fprintf(stderr, "non-option ARGV-elements: ");
-    while (optind < argc) {
-      fprintf(stderr, "%s ", argv[optind++]);
-    }
-    fprintf(stderr, "\n");
-    print_usage(argc, argv);
-  }
-
   // expand any paths
   wordexp_t expansion;
   int ret = wordexp(opts->proj_tmpls_root_path, &expansion, 0);
@@ -96,10 +112,34 @@ int handle_opts(int argc, char **argv, realize_options_t *opts) {
     wordfree(&expansion);
     return -1;
   }
-
   strncpy(opts->proj_tmpls_root_path, expansion.we_wordv[0],
           sizeof(opts->proj_tmpls_root_path));
 
+  if (opts->command == cmd_generate_project) {
+    // we need two arguments here
+    if (argc - optind != 2) {
+      perror("exactly two arguments are required");
+      fprintf(stderr, "The command requires exactly two arguments: template "
+                      "and project name");
+      return -1;
+    }
+
+    strncpy(opts->template_name, argv[optind], sizeof(opts->template_name));
+    if (strlen(argv[optind]) > TEMPLATE_NAME_MAX) {
+      fprintf(stderr, "Template name cannot be > %d characters in length.\n",
+              TEMPLATE_NAME_MAX);
+      return -1;
+    }
+
+    strncpy(opts->project_name, argv[optind + 1], sizeof(opts->project_name));
+    if (strlen(argv[optind + 1]) > PROJECT_NAME_MAX) {
+      fprintf(stderr, "Template name cannot be > %d characters in length.\n",
+              TEMPLATE_NAME_MAX);
+      return -1;
+    }
+
+    return 0;
+  }
   // we only list projects once we have our options filledin
   // since we need to
   return 0;
