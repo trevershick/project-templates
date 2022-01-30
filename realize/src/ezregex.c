@@ -2,7 +2,7 @@
 
 #include <regex.h>
 
-#define ARRAY_SIZE(arr) (sizeof((arr)) / sizeof((arr)[0]))
+#include "realize_defs.h"
 
 int ez_matches(const char *re, const char *str) {
   regex_t regex;

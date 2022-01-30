@@ -5,6 +5,6 @@
 #define EZREGEX_NOMATCH 0
 #define EZREGEX_MATCH 1
 
-int ez_matches(const char* regex, const char* str);
+int ez_matches(const char *regex, const char *str);
 
 #endif

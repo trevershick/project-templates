@@ -1,17 +1,19 @@
-#ifndef __REALIZE_TYPES_H__
-#define __REALIZE_TYPES_H__
+#ifndef __REALIZE_DEFS_H__
+#define __REALIZE_DEFS_H__
 
-#define _GNU_SOURCE
-#define _XOPEN_SOURCE 500
 #include <linux/limits.h>
 #include <stdbool.h>
+#include <stddef.h>
 #include <sys/ioctl.h>
 
 #define TEMPLATE_NAME_MAX 16
 #define PROJECT_NAME_MAX 16
-
 #define DEFAULT_PROJ_TMPLS_ROOT_PATH "~/project-templates"
 #define TEMPLATE_FOLDER_FMT "%s/template-%s"
+#define NOT_SET_STRING "<none>"
+#define PNAME_PATTERN "^[a-zA-Z0-9]+$"
+#define TOKEN "PRJNAME"
+#define ARRAY_SIZE(arr) (sizeof((arr)) / sizeof((arr)[0]))
 
 enum realize_command {
   cmd_generate_project,
@@ -19,6 +21,20 @@ enum realize_command {
   cmd_print_usage,
   cmd_print_version,
 };
+
+typedef struct realize_stats_s {
+  size_t template_files;
+  size_t template_dirs;
+  size_t files_added;
+  size_t files_replaced;
+  size_t dirs_added;
+} realize_stats_t;
+
+#define LOG_LEVEL_TRACE 2
+#define LOG_LEVEL_DEBUG 1
+#define LOG_LEVEL_INFO 0
+#define LOG_LEVEL_QUIET -1
+#define LOG_LEVEL_ERROR -2
 
 typedef struct realize_options_s {
   enum realize_command command;
@@ -32,9 +48,13 @@ typedef struct realize_options_s {
   char template_name[TEMPLATE_NAME_MAX];
   // test1 for example
   char project_name[PROJECT_NAME_MAX];
-  bool debug;
+
+  int log_level;
+
   bool force;
+
   struct winsize window_size;
+  realize_stats_t stats;
 } realize_options_t;
 
 #endif

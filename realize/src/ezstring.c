@@ -1,8 +1,8 @@
 #include "ezstring.h"
 
+#include <assert.h>
 #include <stdlib.h>
 #include <string.h>
-#include <assert.h>
 
 void ensmallen(char *buffer, size_t sz, const char *str) {
   int l = strlen(str);
@@ -20,7 +20,7 @@ void str_replace(char *target, size_t target_sz, const char *needle,
   size_t needle_len = strlen(needle);
   size_t repl_len = strlen(replacement);
 
-  char *buffer = (char*) malloc(target_sz);
+  char *buffer = (char *)malloc(target_sz);
   memset(buffer, 0, target_sz);
 
   char *insert_point = &buffer[0];
