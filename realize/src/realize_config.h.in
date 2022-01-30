@@ -1,3 +1,2 @@
 #define realize_VERSION_MAJOR @realize_VERSION_MAJOR@
 #define realize_VERSION_MINOR @realize_VERSION_MINOR@
-

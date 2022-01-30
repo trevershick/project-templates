@@ -12,15 +12,16 @@ project(
 
 configure_file(src/realize_config.h.in realize_config.h)
 
-add_executable(
-  realize
-  src/realize.c
-)
 
 file (
-  GLOB_RECURSE
-  realize_sources
-  src/**.*
+  GLOB_RECURSE realize_sources
+  src/*c
+  src/*.h
+)
+
+add_executable(
+  realize
+  ${realize_sources}
 )
 
 target_sources(
@@ -33,5 +34,4 @@ target_include_directories(
   realize
   PUBLIC
   "${PROJECT_BINARY_DIR}"
-  ${CMAKE_CURRENT_BINARY_DIR}
 )
