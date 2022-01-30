@@ -1,11 +1,14 @@
-#ifndef _REALIZE_TYPES_H
-#define _REALIZE_TYPES_H
+#ifndef __REALIZE_TYPES_H__
+#define __REALIZE_TYPES_H__
 
-#include <limits.h>
+#include <linux/limits.h>
 #include <stdbool.h>
 
 #define TEMPLATE_NAME_MAX 16
 #define PROJECT_NAME_MAX 16
+
+#define DEFAULT_PROJ_TMPLS_ROOT_PATH "~/project-templates"
+#define TEMPLATE_FOLDER_FMT "%s/template-%s"
 
 enum realize_command {
   cmd_generate_project,

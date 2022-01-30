@@ -1,9 +1,7 @@
-#ifndef _CLI_OPTIONS_H
-#define _CLI_OPTIONS_H
+#ifndef __CLI_OPTIONS_H__
+#define __CLI_OPTIONS_H__
 
 #include "realize_types.h"
-
-#define DEFAULT_PROJ_TMPLS_ROOT_PATH "~/project-templates"
 
 int validate_opts(const realize_options_t *);
 void show_opts(const realize_options_t *);
