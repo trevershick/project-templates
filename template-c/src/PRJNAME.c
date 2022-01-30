@@ -15,7 +15,7 @@ int handle_opts(PRJNAME_options_t *, int, char **);
 int load_opts_defaults(PRJNAME_options_t *);
 
 // commands
-int do_list_templates(PRJNAME_options_t *);
+int do_main_function(PRJNAME_options_t*);
 int do_generate_project(PRJNAME_options_t *);
 int do_print_version(PRJNAME_options_t *);
 int do_print_usage(PRJNAME_options_t *, int, char **);
@@ -41,14 +41,14 @@ int main(int argc, char **argv) {
 
   switch (options.command) {
   case cmd_do_main_function:
-    printf("DO MAIN FUNCTION\n");
+    ret = do_main_function(&options);
     break;
   case cmd_print_usage:
-    do_print_usage(&options, argc, argv);
+    ret = do_print_usage(&options, argc, argv);
     break;
   case cmd_print_version:
-    do_print_version(&options);
+    ret = do_print_version(&options);
     break;
   }
-  exit(ret);
+  exit(ret * -1);
 }
