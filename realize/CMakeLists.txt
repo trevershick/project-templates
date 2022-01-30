@@ -1,0 +1,37 @@
+cmake_minimum_required(VERSION 3.10)
+
+# specify the C++ standard
+set(CMAKE_CXX_STANDARD 14)
+set(CMAKE_CXX_STANDARD_REQUIRED True)
+set (CMAKE_EXPORT_COMPILE_COMMANDS ON)
+
+project(
+  realize
+  VERSION 1.0
+)
+
+configure_file(src/realize_config.h.in realize_config.h)
+
+add_executable(
+  realize
+  src/realize.c
+)
+
+file (
+  GLOB_RECURSE
+  realize_sources
+  src/**.*
+)
+
+target_sources(
+  realize
+  PRIVATE
+  ${realize_sources}
+)
+
+target_include_directories(
+  realize
+  PUBLIC
+  "${PROJECT_BINARY_DIR}"
+  ${CMAKE_CURRENT_BINARY_DIR}
+)
