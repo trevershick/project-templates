@@ -80,6 +80,7 @@ static int visit_path(const char *path, const struct stat *s, int typeflag) {
   int sz = (g_opts->window_size.ws_col - 10) / 2;
   rprintf(g_opts, LOG_LEVEL_DEBUG, "%c %-*.*s -> %-*.*s  %c\n", type, sz, sz, b,
           sz, sz, destination_path, action);
+  rprintf(g_opts, LOG_LEVEL_DEBUG, "make_file returning %d\n", ret);
   return ret;
 };
 
@@ -88,7 +89,8 @@ static int make_dir(realize_options_t *opts, const char *src, const char *dst,
   int ret = 0;
   opts->stats.template_dirs++;
   if (!exists) {
-    ret = mkdir(dst, DEFAULT_MODE);
+    if (!opts->dryrun)
+      ret = mkdir(dst, DEFAULT_MODE);
     opts->stats.dirs_added++;
     if (ret)
       perror(dst);
@@ -104,48 +106,52 @@ static int make_file(realize_options_t *opts, const char *src, const char *dst,
     return 0;
   }
 
-  // create the file and filter its contents
-  FILE *fw = fopen(dst, "w");
-  if (fw == NULL) {
-    perror(dst);
-    return -1;
-  }
-
-  FILE *fr = fopen(src, "r");
-  if (fr == NULL) {
-    perror(src);
-    return -1;
-  }
-
-  char *line = NULL;
-  size_t len = 0;
-  ssize_t read;
-  size_t writesz;
   int ret = 0;
-  // this is pretty sloppy
-  while ((read = getline(&line, &len, fr)) != -1) {
-    memset(line_buffer, 0, sizeof(line_buffer));
-    memcpy(line_buffer, line, read);
-    str_replace(line_buffer, sizeof(line_buffer), TOKEN, g_opts->project_name);
-    writesz = strlen(line_buffer);
-    ret = fwrite(line_buffer, writesz, 1, fw);
-    if (ret != 1) {
-      rprintf(opts, LOG_LEVEL_ERROR, "Write of %zu(%zu) bytes failed to %s.\n",
-              writesz, ret, dst);
-      ret = -1;
-      break;
+  if (!opts->dryrun) {
+    // create the file and filter its contents
+    FILE *fw = fopen(dst, "w");
+    if (fw == NULL) {
+      perror(dst);
+      return -1;
     }
-    line = NULL;
-  }
 
-  if (fclose(fw)) {
-    perror("fclose");
-    return -1;
-  }
+    FILE *fr = fopen(src, "r");
+    if (fr == NULL) {
+      perror(src);
+      return -1;
+    }
 
-  if (fclose(fr)) {
-    perror("fclose");
-    return -1;
+    char *line = NULL;
+    size_t len = 0;
+    ssize_t read;
+    size_t writesz;
+    // this is pretty sloppy
+    while ((read = getline(&line, &len, fr)) != -1) {
+      memset(line_buffer, 0, sizeof(line_buffer));
+      memcpy(line_buffer, line, read);
+      str_replace(line_buffer, sizeof(line_buffer), TOKEN,
+                  g_opts->project_name);
+      writesz = strlen(line_buffer);
+      ret = fwrite(line_buffer, writesz, 1, fw);
+      if (ret != 1) {
+        rprintf(opts, LOG_LEVEL_ERROR,
+                "Write of %zu(%zu) bytes failed to %s.\n", writesz, ret, dst);
+        ret = -1;
+        break;
+      }
+      ret = 0;
+      line = NULL;
+    }
+
+    if (fclose(fw)) {
+      perror("fclose");
+      return -1;
+    }
+
+    if (fclose(fr)) {
+      perror("fclose");
+      return -1;
+    }
   }
 
   if (exists)

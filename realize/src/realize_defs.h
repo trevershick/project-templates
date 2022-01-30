@@ -35,6 +35,9 @@ typedef struct realize_stats_s {
 #define LOG_LEVEL_INFO 0
 #define LOG_LEVEL_QUIET -1
 #define LOG_LEVEL_ERROR -2
+#define LOG_LEVEL_USAGE -99
+
+#define Y_OR_N(i) (i ? "Y" : "N")
 
 typedef struct realize_options_s {
   enum realize_command command;
@@ -52,6 +55,8 @@ typedef struct realize_options_s {
   int log_level;
 
   bool force;
+
+  bool dryrun;
 
   struct winsize window_size;
   realize_stats_t stats;

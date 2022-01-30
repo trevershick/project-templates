@@ -23,21 +23,36 @@ int load_opts_defaults(realize_options_t *opts) {
   return 0;
 }
 
+const char *const kLogLevels[] = {
+    "Error", "Quiet", "Info", "Debug", "Trace",
+};
+
+static const char* ll_str(realize_options_t* o) {
+    int i = o->log_level + LOG_LEVEL_ERROR;
+    if (i<0 || i > sizeof(kLogLevels)-1) {
+        return "???";
+    }
+    return kLogLevels[i];
+}
+
 #define OPTS_LINE_FMT "  %-25s: %s\n"
 void show_opts(realize_options_t *opts) {
   // log at debug level
+  // clang-format off
   rprintf(opts, LOG_LEVEL_DEBUG, "Selected Options:\n");
-  rprintf(opts, LOG_LEVEL_DEBUG, OPTS_LINE_FMT, "Templates Root Path",
-          opts->proj_tmpls_root_path);
-  rprintf(opts, LOG_LEVEL_DEBUG, OPTS_LINE_FMT, "Template Name",
-          opts->template_name);
-  rprintf(opts, LOG_LEVEL_DEBUG, OPTS_LINE_FMT, "Project Name",
-          opts->project_name);
-  rprintf(opts, LOG_LEVEL_DEBUG, OPTS_LINE_FMT, "Force",
-          opts->force ? "Y" : "N");
-  rprintf(opts, LOG_LEVEL_DEBUG, OPTS_LINE_FMT, "Debug",
-          (opts->log_level == LOG_LEVEL_DEBUG) ? "Y" : "N");
+  rprintf(opts, LOG_LEVEL_DEBUG, OPTS_LINE_FMT, "Templates Root Path", opts->proj_tmpls_root_path);
+  rprintf(opts, LOG_LEVEL_DEBUG, OPTS_LINE_FMT, "Template Name", opts->template_name);
+  rprintf(opts, LOG_LEVEL_DEBUG, OPTS_LINE_FMT, "Project Name", opts->project_name);
+  rprintf(opts, LOG_LEVEL_DEBUG, OPTS_LINE_FMT, "Force", Y_OR_N(opts->force));
+  // clang-format on
+
+  char buffer[8];
+  snprintf(buffer, sizeof(buffer), "%d", opts->log_level);
+  // clang-format off
+  rprintf(opts, LOG_LEVEL_DEBUG, OPTS_LINE_FMT, "Log Level", ll_str(opts));
+  rprintf(opts, LOG_LEVEL_DEBUG, OPTS_LINE_FMT, "Dry Run", Y_OR_N(opts->dryrun));
   rprintf(opts, LOG_LEVEL_DEBUG, "\n");
+  // clang-format on
 }
 
 int validate_opts(realize_options_t *opts) {
@@ -72,14 +87,19 @@ int handle_opts(realize_options_t *opts, int argc, char **argv) {
   int c;
   while (1) {
     int option_index = 0;
-    static struct option long_options[] = {{"help", no_argument, 0, 'h'},
-                                           {"force", no_argument, 0, 'f'},
-                                           {"debug", no_argument, 0, 'd'},
-                                           {"quiet", no_argument, 0, 'q'},
-                                           {"version", no_argument, 0, 'v'},
-                                           {"list", no_argument, 0, 'l'},
-                                           {0, 0, 0, 0}};
-    c = getopt_long(argc, argv, "hqfvl?d", long_options, &option_index);
+    static struct option long_options[] = {
+        // clang-format off
+        {"help", no_argument, 0, 'h'},
+        {"force", no_argument, 0, 'f'},
+        {"debug", no_argument, 0, 'd'},
+        {"quiet", no_argument, 0, 'q'},
+        {"dryrun", no_argument, 0, 'n'},
+        {"version", no_argument, 0, 'v'},
+        {"list", no_argument, 0, 'l'},
+        {0, 0, 0, 0}
+        // clang-format on
+    };
+    c = getopt_long(argc, argv, "vh?fqldn", long_options, &option_index);
     if (c == -1)
       break;
 
@@ -92,6 +112,9 @@ int handle_opts(realize_options_t *opts, int argc, char **argv) {
       break;
     case 'd':
       opts->log_level = LOG_LEVEL_DEBUG;
+      break;
+    case 'n':
+      opts->dryrun = true;
       break;
     case 'v':
       opts->command = cmd_print_version;
@@ -165,23 +188,17 @@ int handle_opts(realize_options_t *opts, int argc, char **argv) {
 }
 
 void do_print_usage(realize_options_t *opts, int arc, char **argv) {
-  // clang-format: off
-  rprintf(opts, LOG_LEVEL_ERROR, "Usage:\n");
-  rprintf(opts, LOG_LEVEL_ERROR,
-          "  %s (--list|-l)                   List available templates.\n",
-          argv[0]);
-  rprintf(opts, LOG_LEVEL_ERROR,
-          "  %s [options] <template> <name>   Generate a project from a "
-          "template.\n",
-          argv[0]);
-  rprintf(opts, LOG_LEVEL_ERROR, "\n");
-  rprintf(opts, LOG_LEVEL_ERROR, "Options:\n");
-  rprintf(opts, LOG_LEVEL_ERROR,
-          "  -h, --help            Print this help message\n");
-  rprintf(opts, LOG_LEVEL_ERROR,
-          "  -v, --version         Print version information\n");
-  rprintf(
-      opts, LOG_LEVEL_ERROR,
-      "  -d, --debug           Print extra debugging info during processing\n");
-  // clang-format: on
+  // clang-format off
+  rprintf(opts, LOG_LEVEL_USAGE, "Usage:\n");
+  rprintf(opts, LOG_LEVEL_USAGE, "  %s (--list | -l)       List available templates.\n", argv[0]);
+  rprintf(opts, LOG_LEVEL_USAGE, "  %s (--version | -v)    Print version information\n", argv[0]);
+  rprintf(opts, LOG_LEVEL_USAGE, "  %s (--help | -h)       Print this help\n", argv[0]);
+  rprintf(opts, LOG_LEVEL_USAGE, "  %s [options] <template> <name>   Generate a project from a " "template.\n", argv[0]);
+  rprintf(opts, LOG_LEVEL_USAGE, "\n");
+  rprintf(opts, LOG_LEVEL_USAGE, "Options:\n");
+  rprintf(opts, LOG_LEVEL_USAGE, "  -n, --dryrun          Don't actually change anything\n");
+  rprintf(opts, LOG_LEVEL_USAGE, "  -f, --force           Replace any existing files\n");
+  rprintf(opts, LOG_LEVEL_USAGE, "  -q, --quiet           Print less output\n");
+  rprintf(opts, LOG_LEVEL_USAGE, "  -d, --debug           Print extra debugging info\n");
+  // clang-format on
 }
