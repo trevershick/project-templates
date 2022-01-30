@@ -1,30 +1,51 @@
 #define _XOPEN_SOURCE 500
 
-#include <ftw.h>
+#include <stdbool.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
 
-int cb(const char *fpath, const struct stat *sb, int typeflag) {
-  char tbuf[20];
-  memset(tbuf, 0, sizeof(tbuf));
+#include "PRJNAME_cli_opts.h"
+#include "PRJNAME_config.h"
+#include "PRJNAME_types.h"
 
-  switch (typeflag) {
-  case FTW_F:
-    strcpy(tbuf, "f");
+void print_version();
+
+int main(int argc, char **argv) {
+
+  int ret = 0;
+  PRJNAME_options_t options;
+  memset(&options, 0, sizeof(options));
+
+  ret = load_opts_defaults(&options);
+  if (ret) exit(ret);
+
+  ret = handle_opts(argc, argv, &options);
+  if (ret) exit(ret);
+
+  ret = validate_opts(&options);
+  if (ret) exit(ret);
+
+  if (options.debug) {
+    show_opts(&options);
+  }
+
+  switch (options.command) {
+  case cmd_do_main_function:
+    printf("DO MAIN FUNCTION\n");
     break;
-  case FTW_D:
-    strcpy(tbuf, "d");
+  case cmd_print_usage:
+    print_usage(argc, argv);
     break;
-  default:
-    strcpy(tbuf, "?");
+  case cmd_print_version:
+    print_version();
     break;
   }
-  printf("%-50s %-4s %ld\n", fpath, tbuf, sb->st_size);
-  return 0;
+  exit(ret);
 }
 
-int main(void) {
-  int ret = ftw(".", cb, 0);
-  exit(ret);
+void list_templates(PRJNAME_options_t *opts) {}
+
+void print_version() {
+  fprintf(stdout, "%d.%d\n", PRJNAME_VERSION_MAJOR, PRJNAME_VERSION_MINOR);
 }
