@@ -120,7 +120,7 @@ int handle_opts(int argc, char **argv, realize_options_t *opts) {
     if (argc - optind != 2) {
       perror("exactly two arguments are required");
       fprintf(stderr, "The command requires exactly two arguments: template "
-                      "and project name");
+                      "and project name\n");
       return -1;
     }
 
