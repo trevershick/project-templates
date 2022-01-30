@@ -18,3 +18,6 @@ build: src/*.* Makefile CMakeLists.txt
 
 install:
 	sudo cmake --build build -t install
+
+format:
+	clang-format -i src/*.c src/*.h
