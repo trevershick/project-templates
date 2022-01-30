@@ -36,3 +36,7 @@ target_include_directories(
   PUBLIC
   "${PROJECT_BINARY_DIR}"
 )
+
+install(
+  TARGETS realize
+)
