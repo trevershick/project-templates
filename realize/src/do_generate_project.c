@@ -15,7 +15,6 @@
 #include "realize_io.h"
 
 char line_buffer[4096];
-#define DEFAULT_MODE (S_IRWXU | S_IRGRP | S_IXGRP | S_IROTH | S_IXOTH)
 
 // this is disappointing
 static realize_options_t *g_opts = 0;
@@ -51,6 +50,7 @@ static int visit_path(const char *path, const struct stat *s, int typeflag) {
 
   // work out a human readable source path
   char b[PATH_MAX];
+  memset(b, 0, sizeof(b));
   memcpy(b, path, strlen(path));
   str_replace(b, sizeof(b), g_opts->proj_tmpls_root_path, "<root>");
 
@@ -80,7 +80,7 @@ static int visit_path(const char *path, const struct stat *s, int typeflag) {
   int sz = (g_opts->window_size.ws_col - 10) / 2;
   rprintf(g_opts, LOG_LEVEL_DEBUG, "%c %-*.*s -> %-*.*s  %c\n", type, sz, sz, b,
           sz, sz, destination_path, action);
-  rprintf(g_opts, LOG_LEVEL_DEBUG, "make_file returning %d\n", ret);
+  rprintf(g_opts, LOG_LEVEL_TRACE, "make_file returning %d\n", ret);
   return ret;
 }
 

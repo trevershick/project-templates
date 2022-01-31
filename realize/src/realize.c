@@ -14,6 +14,7 @@ void show_opts(realize_options_t *);
 void show_stats(realize_options_t *);
 int handle_opts(realize_options_t *, int, char **);
 int load_opts_defaults(realize_options_t *);
+int read_config_rc(realize_options_t *);
 
 // commands
 int do_list_templates(realize_options_t *);
@@ -27,6 +28,10 @@ int main(int argc, char **argv) {
   memset(&options, 0, sizeof(options));
 
   ret = load_opts_defaults(&options);
+  if (ret)
+    exit(ret);
+
+  ret = read_config_rc(&options);
   if (ret)
     exit(ret);
 

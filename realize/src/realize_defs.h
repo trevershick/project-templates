@@ -14,6 +14,7 @@
 #define PNAME_PATTERN "^[a-zA-Z0-9]+$"
 #define TOKEN "PRJNAME"
 #define ARRAY_SIZE(arr) (sizeof((arr)) / sizeof((arr)[0]))
+#define DEFAULT_MODE (S_IRWXU | S_IRGRP | S_IXGRP | S_IROTH | S_IXOTH)
 
 enum realize_command {
   cmd_generate_project,
@@ -51,6 +52,8 @@ typedef struct realize_options_s {
   char template_name[TEMPLATE_NAME_MAX];
   // test1 for example
   char project_name[PROJECT_NAME_MAX];
+
+  char configuration_file[PATH_MAX];
 
   int log_level;
 

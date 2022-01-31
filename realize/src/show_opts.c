@@ -25,6 +25,7 @@ void show_opts(realize_options_t *opts) {
   // log at debug level
   // clang-format off
   rprintf(opts, LOG_LEVEL_DEBUG, "Selected Options:\n");
+  rprintf(opts, LOG_LEVEL_DEBUG, OPTS_LINE_FMT, "Config File", opts->configuration_file);
   rprintf(opts, LOG_LEVEL_DEBUG, OPTS_LINE_FMT, "Templates Root Path", opts->proj_tmpls_root_path);
   rprintf(opts, LOG_LEVEL_DEBUG, OPTS_LINE_FMT, "Template Name", opts->template_name);
   rprintf(opts, LOG_LEVEL_DEBUG, OPTS_LINE_FMT, "Project Name", opts->project_name);
