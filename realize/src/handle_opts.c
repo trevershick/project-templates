@@ -81,7 +81,6 @@ int handle_opts(realize_options_t *opts, int argc, char **argv) {
   if (opts->command == cmd_generate_project) {
     // we need two arguments here
     if (argc - optind != 2) {
-      perror("exactly two arguments are required");
       rprintf(opts, LOG_LEVEL_ERROR,
               "The command requires exactly two arguments: template "
               "and project name\n");

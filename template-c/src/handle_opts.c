@@ -55,7 +55,6 @@ int handle_opts(PRJNAME_options_t *opts, int argc, char **argv) {
   if (opts->command == cmd_do_main_function) {
     // we need two arguments here
     // if (argc - optind != 2) {
-    //   perror("exactly two arguments are required");
     //   fprintf(stderr, "The command requires exactly two arguments: template "
     //                   "and project name");
     //   return -1;
