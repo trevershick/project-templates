@@ -1,49 +1,82 @@
-cmake_minimum_required(VERSION 3.10)
+CMAKE_MINIMUM_REQUIRED(VERSION 3.18)
 
-set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
-set(CMAKE_BUILD_TYPE RelWithDebInfo)
-set(CMAKE_C_STANDARD_REQUIRED ON)
-set(CMAKE_C_STANDARD 11)
+SET(CMAKE_EXPORT_COMPILE_COMMANDS ON)
+SET(CMAKE_BUILD_TYPE RelWithDebInfo)
+SET(CMAKE_C_STANDARD_REQUIRED ON)
+SET(CMAKE_C_STANDARD 11)
+SET(CMAKE_MODULE_PATH "${CMAKE_CURRENT_SOURCE_DIR}/cmake" ${CMAKE_MODULE_PATH})
+SET(CMAKE_PREFIX_PATH /usr/local;/opt/local)
 
-project(
+ENABLE_TESTING()
+FIND_PACKAGE(Check 3 REQUIRED)
+
+PROJECT(
   realize
   VERSION 1.0
   LANGUAGES C
 )
 
-configure_file(src/realize_config.h.in realize_config.h)
+CONFIGURE_FILE(src/realize_config.h.in realize_config.h)
 
-
-file (
-  GLOB_RECURSE realize_sources
+FILE(
+  GLOB_RECURSE REALIZE_SOURCES
   src/*c
   src/*.h
 )
 
-add_executable(
+ADD_EXECUTABLE(
   realize
-  ${realize_sources}
+  ${REALIZE_SOURCES}
 )
 
-target_sources(
+TARGET_SOURCES(
   realize
   PRIVATE
-  ${realize_sources}
+  ${REALIZE_SOURCES}
 )
 
-target_include_directories(
+TARGET_INCLUDE_DIRECTORIES(
   realize
   PUBLIC
-  "${PROJECT_BINARY_DIR}"
+  ${PROJECT_BINARY_DIR}
 )
 
-install(
+FILE (
+  GLOB REALIZE_TEST_SOURCES
+  tests/check_main.c
+  tests/*.c
+)
+
+ADD_EXECUTABLE(
+  realizetests
+  ${REALIZE_TEST_SOURCES}
+)
+
+ADD_TEST(
+  NAME realizetests
+  COMMAND realizetests)
+
+TARGET_LINK_LIBRARIES(
+  realizetests
+  PUBLIC
+  ${CHECK_LIBRARIES}
+)
+
+TARGET_INCLUDE_DIRECTORIES(
+  realizetests
+  PUBLIC
+  tests/
+  ${CHECK_INCLUDE_DIRS}
+  ${REALIZE_SOURCES}
+)
+
+INSTALL(
   TARGETS realize
 )
 
 if(MSVC)
-  target_compile_options(realize PRIVATE /W4 /WX)
+  TARGET_COMPILE_OPTIONS(realize PRIVATE /W4 /WX)
 else()
-  target_compile_options(realize PRIVATE -Wall -Wextra -Wpedantic -Werror -Wno-unused-parameter)
+  TARGET_COMPILE_OPTIONS(realize PRIVATE -Wall -Wextra -Wpedantic -Werror -Wno-unused-parameter)
 endif()
 
