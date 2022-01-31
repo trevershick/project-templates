@@ -42,7 +42,6 @@ I create a lot of little programs to try things out, this reduces the boilerplat
 
 ## TODO
 
-* make the project template root customizable
 * improve the token substitution (should work in a streaming fashion)
 * more project templates
 * generate unit tests with libcheck
