@@ -1,7 +1,7 @@
 // needed for ftw
 #define _XOPEN_SOURCE 500
 // needed for getline
-#define _GNU_SOURCE
+#define _POSIX_C_SOURCE 200809L
 
 #include <assert.h>
 #include <ftw.h>

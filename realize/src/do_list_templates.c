@@ -1,7 +1,5 @@
 #include "realize_defs.h"
 
-#include <asm-generic/errno-base.h>
-#include <asm-generic/errno.h>
 #include <dirent.h>
 #include <regex.h>
 #include <stdio.h>

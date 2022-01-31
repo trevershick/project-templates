@@ -1,7 +1,7 @@
 #ifndef __REALIZE_DEFS_H__
 #define __REALIZE_DEFS_H__
 
-#include <linux/limits.h>
+#include <limits.h>
 #include <stdbool.h>
 #include <stddef.h>
 #include <sys/ioctl.h>
