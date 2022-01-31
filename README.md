@@ -27,6 +27,14 @@ This is a simple command line utility that will create shell projects based on a
     realize --list
 
 
+### Configuration
+
+File Location: `~/.config/realize/realizerc`
+
+    # set the templates-root
+    templates-root = ~/project-templates
+
+
 ## Motivation
 
 I create a lot of little programs to try things out, this reduces the boilerplate pain
@@ -34,9 +42,7 @@ I create a lot of little programs to try things out, this reduces the boilerplat
 
 ## TODO
 
-* read configuration options from a config file
 * make the project template root customizable
 * improve the token substitution (should work in a streaming fashion)
 * more project templates
-* make sure it works on a mac (initially written in linux)
 * generate unit tests with libcheck
