@@ -8,6 +8,9 @@ clean:
 build/realize: build
 	cmake --build $<
 
+build/realizetest: build
+	cmake --build $<
+
 compile_commands.json: build/compile_commands.json
 	ln -s $<
 
@@ -18,6 +21,9 @@ build: src/*.* Makefile CMakeLists.txt
 
 install: build/realize
 	sudo cmake --build build -t install
+
+test: build/realizetest
+	cmake --build build -t test
 
 format:
 	clang-format -i src/*.c src/*.h

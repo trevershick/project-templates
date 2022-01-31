@@ -1,6 +1,9 @@
 .PHONY: build clean
 default: build
 
+test:
+	make -C realize test
+
 build:
 	make -C realize
 	make -C template-c

@@ -8,6 +8,9 @@ clean:
 build/PRJNAME: build
 	cmake --build $<
 
+build/PRJNAMEtest: build
+	cmake --build $<
+
 compile_commands.json: build/compile_commands.json
 	ln -s $<
 
@@ -16,8 +19,8 @@ build/compile_commands.json: build
 build: src/*.* Makefile CMakeLists.txt
 	cmake -B build .
 
-install:
-	sudo cmake --build build -t install
+test: build/PRJNAMEtest
+	cmake --build build -t test
 
 format:
 	clang-format -i src/*.c src/*.h
