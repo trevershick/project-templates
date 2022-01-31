@@ -1,46 +1,82 @@
-cmake_minimum_required(VERSION 3.10)
+CMAKE_MINIMUM_REQUIRED(VERSION 3.18)
 
-set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
-set(CMAKE_BUILD_TYPE RelWithDebInfo)
+SET(CMAKE_EXPORT_COMPILE_COMMANDS ON)
+SET(CMAKE_BUILD_TYPE RelWithDebInfo)
+SET(CMAKE_C_STANDARD_REQUIRED ON)
+SET(CMAKE_C_STANDARD 11)
+SET(CMAKE_MODULE_PATH "${CMAKE_CURRENT_SOURCE_DIR}/cmake" ${CMAKE_MODULE_PATH})
+SET(CMAKE_PREFIX_PATH /usr/local;/opt/local)
 
-project(
+ENABLE_TESTING()
+FIND_PACKAGE(Check 3 REQUIRED)
+
+PROJECT(
   PRJNAME
   VERSION 1.0
   LANGUAGES C
 )
 
-configure_file(src/PRJNAME_config.h.in PRJNAME_config.h)
+CONFIGURE_FILE(src/PRJNAME_config.h.in PRJNAME_config.h)
 
-
-file (
-  GLOB_RECURSE PRJNAME_sources
+FILE(
+  GLOB_RECURSE REALIZE_SOURCES
   src/*c
   src/*.h
 )
 
-add_executable(
+ADD_EXECUTABLE(
   PRJNAME
-  ${PRJNAME_sources}
+  ${REALIZE_SOURCES}
 )
 
-target_sources(
+TARGET_SOURCES(
   PRJNAME
   PRIVATE
-  ${PRJNAME_sources}
+  ${REALIZE_SOURCES}
 )
 
-target_include_directories(
+TARGET_INCLUDE_DIRECTORIES(
   PRJNAME
   PUBLIC
-  "${PROJECT_BINARY_DIR}"
+  ${PROJECT_BINARY_DIR}
 )
 
-install(
+FILE (
+  GLOB REALIZE_TEST_SOURCES
+  tests/check_main.c
+  tests/*.c
+)
+
+ADD_EXECUTABLE(
+  PRJNAMEtests
+  ${REALIZE_TEST_SOURCES}
+)
+
+ADD_TEST(
+  NAME PRJNAMEtests
+  COMMAND PRJNAMEtests)
+
+TARGET_LINK_LIBRARIES(
+  PRJNAMEtests
+  PUBLIC
+  ${CHECK_LIBRARIES}
+)
+
+TARGET_INCLUDE_DIRECTORIES(
+  PRJNAMEtests
+  PUBLIC
+  tests/
+  ${CHECK_INCLUDE_DIRS}
+  ${REALIZE_SOURCES}
+)
+
+INSTALL(
   TARGETS PRJNAME
 )
 
 if(MSVC)
-  target_compile_options(PRJNAME PRIVATE /W4 /WX)
+  TARGET_COMPILE_OPTIONS(PRJNAME PRIVATE /W4 /WX)
 else()
-  target_compile_options(PRJNAME PRIVATE -Wall -Wextra -Wpedantic -Werror -Wno-unused-parameter)
+  TARGET_COMPILE_OPTIONS(PRJNAME PRIVATE -Wall -Wextra -Wpedantic -Werror -Wno-unused-parameter)
 endif()
+
