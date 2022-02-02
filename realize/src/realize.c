@@ -40,10 +40,12 @@ int main(int argc, char **argv) {
     exit(ret);
 
   ret = validate_opts(&options);
-  if (ret)
-    exit(ret);
 
   show_opts(&options);
+
+  // exit if validation failed here, after show_opts
+  if (ret)
+    exit(ret);
 
   switch (options.command) {
   case cmd_generate_project:
