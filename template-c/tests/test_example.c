@@ -4,8 +4,13 @@
 #include <stdlib.h>
 
 #include "check_macros.h"
+#include "lib/PRJNAME_lib.h"
+#include "cli/PRJNAME_defs.h"
 
-START_TEST(test_basics1) { ck_assert_uint_eq(1, 1); }
+
+START_TEST(test_basics1) {
+  lib_method();
+  ck_assert_uint_eq(1, 1); }
 END_TEST
 
 START_TEST(test_others1) { ck_assert_uint_eq(1, 1); }
