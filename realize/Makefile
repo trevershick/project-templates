@@ -27,3 +27,4 @@ test: build/realizetest
 
 format:
 	clang-format -i src/*.c src/*.h
+	cmake-format -i CMakeLists.txt

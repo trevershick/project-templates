@@ -16,19 +16,21 @@
 #define ARRAY_SIZE(arr) (sizeof((arr)) / sizeof((arr)[0]))
 #define DEFAULT_MODE (S_IRWXU | S_IRGRP | S_IXGRP | S_IROTH | S_IXOTH)
 
-enum realize_command {
-  cmd_generate_project,
-  cmd_list_templates,
-  cmd_print_usage,
-  cmd_print_version,
+enum realize_command
+{
+    cmd_generate_project,
+    cmd_list_templates,
+    cmd_print_usage,
+    cmd_print_version,
 };
 
-typedef struct realize_stats_s {
-  size_t template_files;
-  size_t template_dirs;
-  size_t files_added;
-  size_t files_replaced;
-  size_t dirs_added;
+typedef struct realize_stats_s
+{
+    size_t template_files;
+    size_t template_dirs;
+    size_t files_added;
+    size_t files_replaced;
+    size_t dirs_added;
 } realize_stats_t;
 
 #define LOG_LEVEL_TRACE 2
@@ -40,29 +42,30 @@ typedef struct realize_stats_s {
 
 #define Y_OR_N(i) (i ? "Y" : "N")
 
-typedef struct realize_options_s {
-  enum realize_command command;
-  // ~/project-templates by default
-  char proj_tmpls_root_path[PATH_MAX - 10 - TEMPLATE_NAME_MAX];
+typedef struct realize_options_s
+{
+    enum realize_command command;
+    // ~/project-templates by default
+    char proj_tmpls_root_path[PATH_MAX - 10 - TEMPLATE_NAME_MAX];
 
-  // ~/project-templates/template-c
-  char proj_tmpl_path[PATH_MAX];
+    // ~/project-templates/template-c
+    char proj_tmpl_path[PATH_MAX];
 
-  // c or whatever
-  char template_name[TEMPLATE_NAME_MAX];
-  // test1 for example
-  char project_name[PROJECT_NAME_MAX];
+    // c or whatever
+    char template_name[TEMPLATE_NAME_MAX];
+    // test1 for example
+    char project_name[PROJECT_NAME_MAX];
 
-  char configuration_file[PATH_MAX];
+    char configuration_file[PATH_MAX];
 
-  int log_level;
+    int log_level;
 
-  bool force;
+    bool force;
 
-  bool dryrun;
+    bool dryrun;
 
-  struct winsize window_size;
-  realize_stats_t stats;
+    struct winsize window_size;
+    realize_stats_t stats;
 } realize_options_t;
 
 #endif

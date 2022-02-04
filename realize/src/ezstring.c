@@ -4,50 +4,57 @@
 #include <stdlib.h>
 #include <string.h>
 
-void ensmallen(char *buffer, size_t sz, const char *str) {
-  size_t l = strlen(str);
-  if (l > sz) {
-    memcpy(buffer, str, l / 2 - 2);
-    memset(buffer + (l / 2 - 2), '.', 4);
-    memcpy(buffer + (l / 2 + 2), str + (l / 2 - 2), l / 2 - 2);
-  } else {
-    memcpy(buffer, str, l);
-  }
+void ensmallen(char *buffer, size_t sz, const char *str)
+{
+    size_t l = strlen(str);
+    if (l > sz)
+    {
+        memcpy(buffer, str, l / 2 - 2);
+        memset(buffer + (l / 2 - 2), '.', 4);
+        memcpy(buffer + (l / 2 + 2), str + (l / 2 - 2), l / 2 - 2);
+    }
+    else
+    {
+        memcpy(buffer, str, l);
+    }
 }
 
 void str_replace(char *target, size_t target_sz, const char *needle,
-                 const char *replacement) {
-  size_t needle_len = strlen(needle);
-  size_t repl_len = strlen(replacement);
+                 const char *replacement)
+{
+    size_t needle_len = strlen(needle);
+    size_t repl_len = strlen(replacement);
 
-  char *buffer = (char *)malloc(target_sz);
-  memset(buffer, 0, target_sz);
+    char *buffer = (char *)malloc(target_sz);
+    memset(buffer, 0, target_sz);
 
-  char *insert_point = &buffer[0];
-  const char *tmp = target;
+    char *insert_point = &buffer[0];
+    const char *tmp = target;
 
-  while (1) {
-    const char *p = strstr(tmp, needle);
+    while (1)
+    {
+        const char *p = strstr(tmp, needle);
 
-    // walked past last occurrence of needle; copy remaining part
-    if (p == NULL) {
-      strcpy(insert_point, tmp);
-      break;
+        // walked past last occurrence of needle; copy remaining part
+        if (p == NULL)
+        {
+            strcpy(insert_point, tmp);
+            break;
+        }
+
+        // copy part before needle
+        memcpy(insert_point, tmp, p - tmp);
+        insert_point += p - tmp;
+
+        // copy replacement string
+        memcpy(insert_point, replacement, repl_len);
+        insert_point += repl_len;
+
+        // adjust pointers, move on
+        tmp = p + needle_len;
     }
 
-    // copy part before needle
-    memcpy(insert_point, tmp, p - tmp);
-    insert_point += p - tmp;
-
-    // copy replacement string
-    memcpy(insert_point, replacement, repl_len);
-    insert_point += repl_len;
-
-    // adjust pointers, move on
-    tmp = p + needle_len;
-  }
-
-  // write altered string back to target
-  strcpy(target, buffer);
-  free(buffer);
+    // write altered string back to target
+    strcpy(target, buffer);
+    free(buffer);
 }
