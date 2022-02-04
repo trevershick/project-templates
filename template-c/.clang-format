@@ -1,0 +1,11 @@
+---
+BasedOnStyle: llvm
+IndentWidth: 4
+
+---
+Language: Cpp
+
+AllowShortFunctionsOnASingleLine: None
+KeepEmptyLinesAtTheStartOfBlocks: false
+BreakBeforeBraces: Allman
+ColumnLimit: 80

@@ -23,4 +23,5 @@ test: build/PRJNAMEtest
 	cmake --build build -t test
 
 format:
-	clang-format -i src/*.c src/*.h
+	clang-format -i src/**/*.c src/**/*.h
+	cmake-format -i CMakeLists.txt
