@@ -9,6 +9,8 @@
 #include <string.h>
 #include <sys/stat.h>
 
+#include <smatch.h>
+
 #include "ezfs.h"
 #include "ezstring.h"
 #include "realize_defs.h"
@@ -24,6 +26,26 @@ static int make_dir(realize_options_t *, const char *s, const char *d,
                     bool dexists);
 static int make_file(realize_options_t *, const char *s, const char *d,
                      bool dexists);
+
+typedef struct
+{
+    FILE *fp;
+    realize_options_t *opts;
+} smatch_data;
+
+int on_smatch_match(const match_t *m, void *d)
+{
+    smatch_data *data = d;
+    if (m->t == MATCH)
+    {
+        fputs(data->opts->project_name, data->fp);
+    }
+    else
+    {
+        fwrite(m->buffer, m->len, 1, data->fp);
+    }
+    return 0;
+}
 
 int do_generate_project(realize_options_t *opts)
 {
@@ -132,30 +154,20 @@ static int make_file(realize_options_t *opts, const char *src, const char *dst,
             return -1;
         }
 
-        char *line = NULL;
-        size_t len = 0;
-        ssize_t read;
-        size_t writesz;
-        // this is pretty sloppy
-        while ((read = getline(&line, &len, fr)) != -1)
-        {
-            memset(line_buffer, 0, sizeof(line_buffer));
-            memcpy(line_buffer, line, read);
-            str_replace(line_buffer, sizeof(line_buffer), TOKEN,
-                        g_opts->project_name);
-            writesz = strlen(line_buffer);
-            ret = fwrite(line_buffer, writesz, 1, fw);
-            if (ret != 1)
-            {
-                rprintf(opts, LOG_LEVEL_ERROR,
-                        "Write of %zu(%zu) bytes failed to %s.\n", writesz, ret,
-                        dst);
-                ret = -1;
-                break;
-            }
-            ret = 0;
-            line = NULL;
-        }
+        smatch_node_t tree;
+        initialize_tree(&tree);
+        add_to_tree(&tree, TOKEN, true);
+        smatch_ctx_t ctx;
+        smatch_data d;
+        d.opts = opts;
+        d.fp = fw;
+        init_smatch_ctx(&ctx, &tree, on_smatch_match, &d);
+        off_t offset = 0;
+
+        char c;
+        do {
+            smatch_process(&ctx, offset, c = fgetc(fr));
+        } while (c != EOF);
 
         if (fclose(fw))
         {
