@@ -142,7 +142,7 @@ static int make_file(realize_options_t *opts, const char *src, const char *dst,
     FILE *fw = NULL;
     int ret = 0;
 
-    for (;!opts->dryrun && !fr && !fw && !ret;)
+    for (; !opts->dryrun && !fr && !fw && !ret;)
     {
         fr = fopen(src, "r");
         fw = fopen(dst, "w");
