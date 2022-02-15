@@ -26,7 +26,7 @@ FIND_PACKAGE(
   REQUIRED
 )
 FIND_PACKAGE(
-  smatch
+  Smatch
   1.0
   REQUIRED
 )
