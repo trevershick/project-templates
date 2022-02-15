@@ -1,3 +1,4 @@
+CMAKE_INSTALL_PREFIX := /opt/local
 default: cmake compile_commands.json
 
 .PHONY: clean
@@ -13,7 +14,7 @@ compile_commands.json: build/compile_commands.json
 build/compile_commands.json: build CMakeLists.txt
 
 build: src/*.* Makefile CMakeLists.txt
-	cmake -B build .
+	cmake -B build -D CMAKE_INSTALL_PREFIX=$(CMAKE_INSTALL_PREFIX)
 
 install: cmake
 	sudo cmake --build build -t install
